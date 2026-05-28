@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://esmfold2.lol/sitemap.xml
