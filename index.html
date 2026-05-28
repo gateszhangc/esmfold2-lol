@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESMFold2: The Bitter Lesson is Coming for Proteins — Alex Rives, BioHub</title>
+  <meta name="description" content="ESMFold2 is an open scientific engine to power prediction, design, and discovery across protein biology. The new model delivers state of the art performance on protein interactions, especially antibodies, a critical modality for therapeutics." />
+  <meta name="keywords" content="ESMFold2, ESMFold, protein folding, Alex Rives, BioHub, ESMC, protein structure prediction, AI biology, protein design, Bitter Lesson, scaling laws, world model, antibodies, therapeutics, cryo-EM, sparse autoencoders, programmable biology" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="ESMFold2" />
+  <link rel="canonical" href="https://esmfold2.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ESMFold2: The Bitter Lesson is Coming for Proteins — Alex Rives, BioHub" />
+  <meta property="og:description" content="ESMFold2 is an open scientific engine to power prediction, design, and discovery across protein biology. State of the art on protein interactions and antibodies." />
+  <meta property="og:url" content="https://esmfold2.com/" />
+  <meta property="og:image" content="/og-image.png" />
+  <meta property="og:site_name" content="ESMFold2" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ESMFold2: The Bitter Lesson is Coming for Proteins — Alex Rives, BioHub" />
+  <meta name="twitter:description" content="ESMFold2 is an open scientific engine to power prediction, design, and discovery across protein biology. State of the art on protein interactions and antibodies." />
+  <meta name="twitter:image" content="/og-image.png" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #06060e;
+      --bg-secondary: #0a0a18;
+      --bg-card: #0f0f1e;
+      --text-primary: #e8e8f0;
+      --text-secondary: #9494a8;
+      --text-muted: #6b6b80;
+      --accent-1: #6366f1;
+      --accent-2: #a855f7;
+      --accent-3: #06b6d4;
+      --border: rgba(99, 102, 241, 0.12);
+      --border-hover: rgba(99, 102, 241, 0.3);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 77px; /* space for fixed nav */
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Nav bar wrapper */
+    .nav-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(6, 6, 14, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .logo img {
+      width: 36px;
+      height: 36px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 120px 0 80px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      letter-spacing: 0.3px;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #e8e8f0 0%, #a855f7 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-meta {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 40px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .hero-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Section */
+    section {
+      padding: 80px 0;
+    }
+
+    .section-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-2);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    /* Feature Grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .feature-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Steps */
+    .steps {
+      counter-reset: step;
+    }
+
+    .step {
+      display: flex;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      counter-increment: step;
+    }
+
+    .step:last-child {
+      border-bottom: none;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .step-body h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .step-body p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Feature highlight rows */
+    .highlight-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .highlight-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .highlight-item .value {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+
+    .highlight-item .label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Quote */
+    .quote-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      margin-top: 48px;
+      position: relative;
+    }
+
+    .quote-block::before {
+      content: '"';
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-size: 48px;
+      color: var(--accent-2);
+      opacity: 0.3;
+      line-height: 1;
+    }
+
+    .quote-block p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.8;
+    }
+
+    .quote-block .attribution {
+      margin-top: 16px;
+      font-style: normal;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* Deep dive / explainer row */
+    .explainer-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .explainer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: border-color 0.2s;
+    }
+
+    .explainer-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .explainer-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .explainer-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .explainer-card .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* FAQ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px 24px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      width: 100%;
+      text-align: left;
+    }
+
+    .faq-question::after {
+      content: '+';
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+
+    .faq-item[open] .faq-question::after {
+      content: '−';
+    }
+
+    .faq-answer {
+      padding: 0 24px 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 80px 0 60px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .hero-meta {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .highlight-row {
+        grid-template-columns: 1fr;
+      }
+
+      .explainer-row {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 26px;
+      }
+
+      nav .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <div class="nav-wrapper">
+    <div class="container">
+      <nav>
+        <a href="/" class="logo">
+          <img src="logo.svg" alt="ESMFold2" width="36" height="36" />
+          ESMFold2
+        </a>
+        <ul class="nav-links">
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#deep-dive">Deep Dive</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Released May 27, 2026 — Alex Rives, BioHub
+      </div>
+      <h1>ESMFold2: The Bitter Lesson is Coming for Proteins</h1>
+      <p>An open scientific engine to power prediction, design, and discovery across protein biology. State of the art performance on protein interactions, especially antibodies — a critical modality for therapeutics.</p>
+      <div class="hero-meta">
+        <span>🔬 Alex Rives</span>
+        <span>🏗️ BioHub</span>
+        <span>🧬 Protein Structure Prediction</span>
+      </div>
+      <div class="hero-actions">
+        <a href="https://mirofish.my/" class="btn-primary" target="_blank" rel="noopener noreferrer">
+          Explore ESMFold2 →
+        </a>
+        <a href="https://github.com/evolutionaryscale/esm" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+          View on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview -->
+  <section id="overview">
+    <div class="container">
+      <div class="section-label">Overview</div>
+      <h2 class="section-title">Beyond Inductive Bias: The Scale Hypothesis for Proteins</h2>
+      <p class="section-subtitle">
+        Datasets vs. inductive bias, world models, and programmable biology. ESMFold2 demonstrates that vanilla BERT-like transformers trained on diverse data can beat specialized models on the hardest protein problems.
+      </p>
+
+      <div class="highlight-row">
+        <div class="highlight-item">
+          <div class="value">2.8B</div>
+          <div class="label">Sequences in ESMC world model</div>
+        </div>
+        <div class="highlight-item">
+          <div class="value">6.8B</div>
+          <div class="label">Proteins in predicted atlas</div>
+        </div>
+        <div class="highlight-item">
+          <div class="value">1.1B</div>
+          <div class="label">Predicted structures released</div>
+        </div>
+      </div>
+
+      <div class="feature-grid" style="margin-top: 48px;">
+        <div class="feature-card">
+          <div class="feature-card-icon">🧬</div>
+          <h3>World Model for Proteins</h3>
+          <p>ESMC learns abstract patterns from 2.8 billion sequences via unsupervised training. The abstraction is semantic, compositional, and supports generalization — predicting real-world biology it was never trained on.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🎯</div>
+          <h3>State of the Art on Antibodies</h3>
+          <p>Without MSAs, AlphaFold struggles on rapidly-mutating antibodies. ESMFold2 achieves state of the art performance on antibody interactions, a critical modality for therapeutic development.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">⚡</div>
+          <h3>Inference Time Scaling</h3>
+          <p>Evidence that inference time compute scaling works across five targets in cancer and immunology. More compute at inference yields better predictions, opening a new axis for improvement.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🔓</div>
+          <h3>Open Under MIT License</h3>
+          <p>Both ESMC (the world model) and ESMFold2 (the structure prediction head) are released under MIT license, enabling broad adoption and community-driven innovation in protein biology.</p>
+        </div>
+      </div>
+
+      <div class="quote-block">
+        <p>"ESM takes a different approach: learn the relationship between different proteins by unsupervised training on as much diversity as you can find, and then correlate that back to structures known from the Protein Data Bank and other sources. In other words, a World Model."</p>
+        <div class="attribution">— Alex Rives, Head of Science at BioHub</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- How It Works -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Scale-Pilled Before It Was Cool</h2>
+      <p class="section-subtitle">
+        The ESM team doubled down on the scale hypothesis after AlphaFold2, betting that diverse data and compute would outperform specialized inductive biases. Here's how the architecture breaks down.
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h3>Unsupervised Pretraining on 2.8B Sequences</h3>
+            <p>ESMC is a BERT-like transformer trained with a masked language modeling objective across 2.8 billion protein sequences drawn from across the tree of life. The model learns rich representations of protein structure and function without any structural supervision.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h3>Structure Prediction Head — ESMFold2</h3>
+            <p>ESMFold2 attaches a structure prediction head to the frozen ESMC representations. It maps the learned sequence embeddings directly to 3D coordinates, using a diffusion-based decoder that iteratively refines the structure.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h3>Cryo-EM Data Integration</h3>
+            <p>Building on Cryo-EM data, ESMFold2 achieves superior performance on protein-protein interactions. The model leverages experimentally determined density maps to improve complex structure prediction, particularly for challenging therapeutic targets.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h3>Mechanistic Interpretability via SAEs</h3>
+            <p>Sparse Autoencoders extract hierarchical semantic features from the world model — from local amino acid biochemistry to global fold identifiers and conceptual motifs like DNA-binding, membrane integration, and disordered regions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Deep Dive -->
+  <section id="deep-dive">
+    <div class="container">
+      <div class="section-label">Deep Dive</div>
+      <h2 class="section-title">A Cell is a Computer</h2>
+      <p class="section-subtitle">
+        Genes are programs for building proteins. The cell nucleus is a storage controller, the ribosome is a JIT-compiler and runtime, and proteins are processes that interact in signalling pathways to produce phenotypes.
+      </p>
+
+      <div class="explainer-row">
+        <div class="explainer-card">
+          <h3>Hierarchical Features of Protein Structure</h3>
+          <p>SAE features capture protein structure at every level: very local (1–3 residues), short-range (~5–10 residues), medium-range (~10–30 residues), and long-range (whole-protein domains). This mirrors the natural hierarchy of protein folding.</p>
+          <span class="tag">Structure</span>
+          <span class="tag" style="margin-left: 6px;">SAE</span>
+        </div>
+        <div class="explainer-card">
+          <h3>Conceptual Motifs Discovered by SAEs</h3>
+          <p>The model learns not just structural features but conceptual ones: DNA-binding across diverse folds, membrane integration regardless of protein class, ~686 features for disordered regions, and disulfide bond identification.</p>
+          <span class="tag">Interpretability</span>
+          <span class="tag" style="margin-left: 6px;">Biology</span>
+        </div>
+      </div>
+
+      <div class="feature-grid" style="margin-top: 16px;">
+        <div class="feature-card">
+          <div class="feature-card-icon">📊</div>
+          <h3>ESMC: The World Model</h3>
+          <p>A model trained on 2.8 billion sequences. Once you have a world model, you can attach heads for downstream tasks: predict properties, decompose functional features, or search representations for proteins that meet design criteria.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🧪</div>
+          <h3>Wet-Lab Validation</h3>
+          <p>Harder molecules predicted by the model were validated in the wet-lab. The world model generates protein sequences and measures predicted properties like binding affinity, bridging computation with experimental biology.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🗺️</div>
+          <h3>Atlas of 6.8 Billion Proteins</h3>
+          <p>ESMFold2 releases an atlas of 6.8 billion proteins with 1.1 billion predicted structures. This massive resource enables researchers to explore protein space at an unprecedented scale.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🔄</div>
+          <h3>Programmable Biology</h3>
+          <p>As we learn to compose SAE features into novel protein designs, we move further towards programmable biology. The cell as a computer, proteins as software, and design as programming.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">The fastest answers to the questions people ask first</h2>
+      <p class="section-subtitle">
+        Start here if you want the creator, the architecture, the training data, or the hardware requirements without reading the whole paper first.
+      </p>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">Who created ESMFold2?</summary>
+          <div class="faq-answer">
+            ESMFold2 comes from Alex Rives and the ESM team at BioHub. The model builds on years of work scaling protein language models, from ESM-1 through ESM2 and ESM3, culminating in the open release of ESMC and ESMFold2.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">How is ESMFold2 different from AlphaFold?</summary>
+          <div class="faq-answer">
+            AlphaFold2 uses multiple sequence alignments (MSAs) as a key inductive bias — clever but limiting for domains like antibodies that lack MSAs. ESMFold2 skips MSAs entirely, using a BERT-like transformer trained on vast protein diversity to build a world model that generalizes better.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">What is the Bitter Lesson in this context?</summary>
+          <div class="faq-answer">
+            The Bitter Lesson, coined by Rich Sutton, states that general methods that leverage computation scale better than human-engineered inductive biases. ESMFold2 embodies this by replacing MSA-based reasoning with large-scale unsupervised pretraining and inference-time computation.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">What is the training data?</summary>
+          <div class="faq-answer">
+            ESMC was trained on 2.8 billion protein sequences drawn from across life. The structure prediction head was trained on the Protein Data Bank (PDB) and augmented with Cryo-EM data and AlphaFold2-predicted structures for distillation.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">Is ESMFold2 open source?</summary>
+          <div class="faq-answer">
+            Yes. Both ESMC (the world model) and ESMFold2 (the structure prediction head) are released under the MIT license. Model weights, inference code, and evaluation benchmarks are publicly available.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">What hardware is needed to run it?</summary>
+          <div class="faq-answer">
+            ESMFold2 can run on a single GPU. The models are designed to be accessible to academic and industrial researchers alike, with inference feasible on desktop-class hardware.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">What are SAEs and why do they matter?</summary>
+          <div class="faq-answer">
+            Sparse Autoencoders (SAEs) are mechanistic interpretability tools that extract interpretable features from neural network representations. In ESMFold2, SAEs reveal hierarchical features from local biochemistry to global fold concepts, enabling novel protein design and discovery.
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>ESMFold2 — Open scientific engine for protein prediction, design, and discovery.</p>
+      <p style="margin-top: 8px;">
+        Built by the ESM team at BioHub. Released under <a href="https://mit-license.org/" target="_blank" rel="noopener">MIT License</a>.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
